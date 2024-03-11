@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colyseusSettings: {fileID: 11400000, guid: 9ae1b2ed65569c84bb1cd6424703b669, type: 2}
-  _player: {fileID: 1641024986821246599, guid: 4cec4f8177da9de4ea264a8145474775, type: 3}
+  _player: {fileID: 4227339359375685227, guid: 4cec4f8177da9de4ea264a8145474775, type: 3}
   _enemy: {fileID: 5114202206819810408, guid: f91764da8c9937a4cbc1390fbcbb2e98, type: 3}
 --- !u!4 &303754686
 Transform:
@@ -604,6 +604,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641024986821246599, guid: 4cec4f8177da9de4ea264a8145474775,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5061074913158676633, guid: 4cec4f8177da9de4ea264a8145474775,
         type: 3}
