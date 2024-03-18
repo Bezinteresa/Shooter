@@ -1,4 +1,5 @@
 using Colyseus;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     [SerializeField] private EnemyController _enemy;
 
     private ColyseusRoom<State> _room;
+    private Dictionary<string,EnemyController> _enemies = new Dictionary<string,EnemyController>();
 
     protected override void Awake()
     {
@@ -27,7 +29,24 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
        _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
         _room.OnStateChange += OnChange;
+
+        _room.OnMessage<string>("Shoot", ApplyShoot);
     }
+
+    //ѕолучили выстрел с сервера, передали контроллеру енеми
+    private void ApplyShoot(string jsonShootInfo) {
+
+        ShootInfo shootInfo = JsonUtility.FromJson<ShootInfo>(jsonShootInfo);
+
+        if (_enemies.ContainsKey(shootInfo.key) == false) {
+            Debug.LogError("≈неми нет, а он пыталс€ стрел€ть");
+            return; 
+        }
+
+        _enemies[shootInfo.key].Shoot(shootInfo);
+
+    }
+
 
     private void OnChange(State state, bool isFirstState) {
 
@@ -51,15 +70,26 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         Instantiate(_player,position,Quaternion.identity);
     }
 
+
+   
+
     private void CreateEnemy(string key, Player player) {
 
         var position = new Vector3(player.pX, player.pY, player.pZ);
 
         var enemy = Instantiate(_enemy, position, Quaternion.identity);
         enemy.Init(player);
+
+        _enemies.Add(key, enemy);
     }
 
     private void RemoveEnemy(string key, Player player) {
+
+        if (_enemies.ContainsKey(key) == false) return; 
+        
+        var enemy = _enemies[key];
+        enemy.Destroy();
+        _enemies.Remove(key);
 
     }
 
@@ -68,9 +98,17 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         _room.Leave();
     }
 
+    //move
     public void SendMessage(string key,Dictionary<string, object> data) {
 
         _room.Send(key, data);
     }
+    
+    //shoot 
+    public void SendMessage(string key, string data) {
+        _room.Send(key, data);
+    }
+
+    public string GetSessionID() => _room.SessionId;
 
 }

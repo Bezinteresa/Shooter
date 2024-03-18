@@ -13,6 +13,8 @@ public class PlayerCharacter : Character
     [SerializeField] private CheckFly _checkFly;
     [SerializeField] private float _junpDelay = 0.2f;
 
+    [SerializeField] private CharacterAnimation _characterAnimation;
+
     private float _inputH;
     private float _inputV;
     private float _rotateY;
@@ -79,6 +81,11 @@ public class PlayerCharacter : Character
 
         _jumpTime = Time.time;
         _rigidbody.AddForce(0,_jumpForce,0, ForceMode.VelocityChange);
+    }
+
+    //Присяд наверное можно сразу из контроллера
+    public void Crouch(bool boo) {
+        _characterAnimation.ChangeCrouchBool(boo);
     }
 
 }
