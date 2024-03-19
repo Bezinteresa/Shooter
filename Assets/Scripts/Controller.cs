@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Controller : MonoBehaviour {
 
@@ -25,10 +26,10 @@ public class Controller : MonoBehaviour {
 
 
         bool space = Input.GetKeyDown(KeyCode.Space);
-
-        _player.SetInput(h, v, mouseX*_mouseSensetivity);
-        _player.RotateX(-mouseY * _mouseSensetivity);
         if (space) _player.Jump();
+
+        _player.SetInput(h, v, mouseX * _mouseSensetivity);
+        _player.RotateX(-mouseY * _mouseSensetivity);
 
         //Присяд
         bool crouch = Input.GetKey(KeyCode.C) || Input.GetKey(KeyCode.LeftControl) ? true : false ;
@@ -36,7 +37,6 @@ public class Controller : MonoBehaviour {
 
         if (isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot( ref shootInfo);
         
-
         SendMove();
     }
 
@@ -47,11 +47,9 @@ public class Controller : MonoBehaviour {
 
         _multiplayerManager.SendMessage("shoot", json);
     }
-
-
     private void SendMove() {
 
-        _player.GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX, out float rotateY);
+        _player.GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX, out float rotateY,out bool crouch, out float rotateVY);
         Dictionary<string, object> data = new Dictionary<string, object>() {
             {"pX", position.x}, 
             {"pY", position.y},
@@ -60,7 +58,13 @@ public class Controller : MonoBehaviour {
             {"vY", velocity.y},
             {"vZ", velocity.z},
             {"rX", rotateX },
-            {"rY", rotateY }
+            {"rY", rotateY },
+
+            //Присяд
+            {"cB", crouch },
+
+            //Поворот сглаживание
+            {"rVY", rotateVY }
         };
         _multiplayerManager.SendMessage("move", data);
     }

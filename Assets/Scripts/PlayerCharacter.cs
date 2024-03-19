@@ -13,6 +13,9 @@ public class PlayerCharacter : Character
     [SerializeField] private CheckFly _checkFly;
     [SerializeField] private float _junpDelay = 0.2f;
 
+    [Header("Присяд")]
+    //Для присяда
+    [SerializeField] private bool _isCrouch;
     [SerializeField] private CharacterAnimation _characterAnimation;
 
     private float _inputH;
@@ -58,6 +61,7 @@ public class PlayerCharacter : Character
     private void RotateY() {
         _rigidbody.angularVelocity = new Vector3(0, _rotateY, 0);
         _rotateY = 0;
+
     }
 
     public void RotateX(float value) {
@@ -66,11 +70,19 @@ public class PlayerCharacter : Character
         _head.localEulerAngles = new Vector3(_currentRotateX,0,0);
     }
 
-    public void GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX, out float rotateY) {
+    public void GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX,
+        out float rotateY, out bool crouch, out float rotateVY) {
+
         position = transform.position;
         velocity = _rigidbody.velocity;
         rotateY = transform.eulerAngles.y;
         rotateX = _head.localEulerAngles.x;
+
+        //Присяд
+        crouch = _isCrouch;
+
+        //Поворот сглаживание
+        rotateVY = _rigidbody.angularVelocity.y;
 
     }
 
@@ -86,6 +98,7 @@ public class PlayerCharacter : Character
     //Присяд наверное можно сразу из контроллера
     public void Crouch(bool boo) {
         _characterAnimation.ChangeCrouchBool(boo);
+        _isCrouch = boo;
     }
 
 }

@@ -70,9 +70,6 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         Instantiate(_player,position,Quaternion.identity);
     }
 
-
-   
-
     private void CreateEnemy(string key, Player player) {
 
         var position = new Vector3(player.pX, player.pY, player.pZ);

@@ -16,12 +16,9 @@ public class CharacterAnimation : MonoBehaviour
     private float lerpTime = 0.2f;
     [SerializeField] private Animator _crouchAnimator;
 
-
     [SerializeField] private Animator _animator;
     [SerializeField] private CheckFly _checkFly;
     [SerializeField] private Character _character;
-
-
 
     private void Update() {
 

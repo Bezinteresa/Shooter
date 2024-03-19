@@ -53,6 +53,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <_speed>k__BackingField: 2
   _head: {fileID: 8986955935602327064}
+  _characterAnimation: {fileID: 812666295770838569}
 --- !u!114 &5114202206819810408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,6 +103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd2abfbe804887242b327ae40b1319f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _currentCrouch: 0
+  _crouchAnimator: {fileID: 6221702262084868785}
   _animator: {fileID: 3135847887334314792}
   _checkFly: {fileID: 8305040566865618049}
   _character: {fileID: 5919277609827337396}
@@ -282,6 +285,10 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3783090178872861316, guid: 5b9e5150db7b2204d98b5f69a683d1e6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6221702262084868785}
     - targetCorrespondingSourceObject: {fileID: 5773215855315535954, guid: 5b9e5150db7b2204d98b5f69a683d1e6,
         type: 3}
       insertIndex: -1
@@ -297,6 +304,33 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 3005027578949977253}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2104373791003813409 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3783090178872861316, guid: 5b9e5150db7b2204d98b5f69a683d1e6,
+    type: 3}
+  m_PrefabInstance: {fileID: 3005027578949977253}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &6221702262084868785
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104373791003813409}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b6482a93fb099b241ab926c1a25d735e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7643408095413533829 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4874820608474953760, guid: 5b9e5150db7b2204d98b5f69a683d1e6,

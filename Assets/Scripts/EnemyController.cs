@@ -28,6 +28,7 @@ public class EnemyController : MonoBehaviour
     public void Init(Player player) {
         _player = player;
         _character.SetSpeed(player.speed);
+        _character.SetCrouch(player.cB);
         player.OnChange += OnChange;
     }
 
@@ -58,6 +59,9 @@ public class EnemyController : MonoBehaviour
 
         Vector3 position = _character.targetPosition;
         Vector3 velosity = _character._velocity;
+        Vector3 rotationY = _character.transform.eulerAngles;
+        Vector3 velocityY = new Vector3(0f, 0f, 0f);
+
 
 
         foreach(var dataChange in changes) {
@@ -84,9 +88,21 @@ public class EnemyController : MonoBehaviour
                 case "rX":
                     _character.SetRotateX((float)dataChange.Value);
                     break;
+
                 case "rY":
-                    _character.SetRotateY((float)dataChange.Value);
+                    rotationY.y = (float)dataChange.Value;
                     break;
+
+                    //Присяд
+                case "cB":
+                    _character.SetCrouch((bool)dataChange.Value);
+                    break;
+
+                    //Поворот сглаживание
+                case "rVY":
+                    velocityY.y = (float)dataChange.Value;
+                    break;
+
 
                 default:
                     Debug.Log("Необрабатывается изменение поля " +  dataChange.Field);
@@ -96,6 +112,9 @@ public class EnemyController : MonoBehaviour
         }
 
         _character.SetMovement(position,velosity,AverageInterval);
+
+        //Поворот
+        _character.SetRotateY( rotationY,velocityY,AverageInterval );
 
     }
 
