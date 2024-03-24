@@ -1,4 +1,5 @@
 using Colyseus.Schema;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private EnemyGun _gun;
 
     private List<float> _reciveTimeInterval = new List<float>() {0,0,0,0,0 };
+
     private float AverageInterval {
         get {
 
@@ -25,10 +27,14 @@ public class EnemyController : MonoBehaviour
 
     private float _lastReceiveTime = 0f;
     private Player _player;
-    public void Init(Player player) {
+
+    public void Init(string key, Player player ) {
+        _character.Init(key);
+
         _player = player;
         _character.SetSpeed(player.speed);
         _character.SetCrouch(player.cB);
+        _character.SetMaxHp(player.maxHP);
         player.OnChange += OnChange;
     }
 
@@ -43,7 +49,6 @@ public class EnemyController : MonoBehaviour
         _player.OnChange -= OnChange;
         Destroy(gameObject);
     }
-
 
     private void SaveReceiveTime() {
         float interval = Time.time - _lastReceiveTime;
@@ -62,11 +67,17 @@ public class EnemyController : MonoBehaviour
         Vector3 rotationY = _character.transform.eulerAngles;
         Vector3 velocityY = new Vector3(0f, 0f, 0f);
 
-
-
         foreach(var dataChange in changes) {
             switch (dataChange.Field) {
 
+                case "loss":
+                   MultiplayerManager.Instance._looseCounter.SetEnemyLoss((byte)dataChange.Value);
+                    break;
+                case "currentHP":
+                    if((sbyte)dataChange.Value > (sbyte)dataChange.PreviousValue) {
+                        _character.RestoreHp((sbyte)dataChange.Value);
+                    }
+                    break;
                 case "pX":
                     position.x = (float)dataChange.Value;
                     break;
@@ -103,9 +114,14 @@ public class EnemyController : MonoBehaviour
                     velocityY.y = (float)dataChange.Value;
                     break;
 
+                    //Смена ружия
+                case "gun":
+                    //_gun.ChangeGun((GunType)dataChange.Value);
+                    _gun.ChangeGun( (GunType)Enum.Parse(typeof(GunType),(string) dataChange.Value));
+                    break;
 
                 default:
-                    Debug.Log("Необрабатывается изменение поля " +  dataChange.Field);
+                    //Debug.Log("Необрабатывается изменение поля " +  dataChange.Field);
                     break;
             }
 

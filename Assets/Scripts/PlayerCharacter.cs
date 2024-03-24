@@ -1,9 +1,15 @@
+using Colyseus.Schema;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class PlayerCharacter : Character
 {
+    [SerializeField] private Health _health;
+    [SerializeField] private PlayerGun _gun;
+
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Transform _head;
     [SerializeField] private Transform _cameraPoint;
@@ -23,12 +29,16 @@ public class PlayerCharacter : Character
     private float _rotateY;
     private float _currentRotateX;
     private float _jumpTime;
+    private string _gunType;
 
     private void Start() {
         Transform camera = Camera.main.transform;
         camera.parent = _cameraPoint;
         camera.localPosition = Vector3.zero;
         camera.localRotation = Quaternion.identity;
+
+        _health.SetMax(maxHealth);
+        _health.SetCurrent(maxHealth);
 
     }
 
@@ -71,7 +81,7 @@ public class PlayerCharacter : Character
     }
 
     public void GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX,
-        out float rotateY, out bool crouch, out float rotateVY) {
+        out float rotateY, out bool crouch, out float rotateVY, out string gun) {
 
         position = transform.position;
         velocity = _rigidbody.velocity;
@@ -84,6 +94,7 @@ public class PlayerCharacter : Character
         //Поворот сглаживание
         rotateVY = _rigidbody.angularVelocity.y;
 
+        gun = _gunType;
     }
 
 
@@ -101,4 +112,31 @@ public class PlayerCharacter : Character
         _isCrouch = boo;
     }
 
+    //Смена оружия
+    public void ChangeGun(GunType type) {
+        _gun.ChangeGun(type);
+        _gunType = type.ToString();
+        Debug.Log(_gunType);
+    }
+
+    internal void OnChange(List<DataChange> changes) {
+
+        foreach (var dataChange in changes) {
+            switch (dataChange.Field) { 
+
+                case "loss":
+                    MultiplayerManager.Instance._looseCounter.SetPlayerLoss((byte)dataChange.Value);
+                    break;
+                case "currentHP":
+                    _health.SetCurrent((sbyte)dataChange.Value);
+                    Debug.Log("OnChange " + dataChange.Value);
+                    break;
+                default:
+                    //Debug.Log("Необрабатывается изменение поля " + dataChange.Field);
+                    break;
+            }
+
+        }
+
+    }
 }

@@ -1,19 +1,17 @@
 using Colyseus;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MultiplayerManager : ColyseusManager<MultiplayerManager>
-{
+public class MultiplayerManager : ColyseusManager<MultiplayerManager> {
+
+    [field: SerializeField] public LooseCounter _looseCounter{ get; private set; }
     [SerializeField] private PlayerCharacter _player;
     [SerializeField] private EnemyController _enemy;
 
     private ColyseusRoom<State> _room;
-    private Dictionary<string,EnemyController> _enemies = new Dictionary<string,EnemyController>();
+    private Dictionary<string, EnemyController> _enemies = new Dictionary<string, EnemyController>();
 
-    protected override void Awake()
-    {
+    protected override void Awake() {
         base.Awake();
 
         Instance.InitializeClient();
@@ -24,13 +22,18 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
         Dictionary<string, object> data = new Dictionary<string, object>()
         {
-            {"speed", _player._speed }
+            {"speed", _player._speed },
+            {"hp", _player.maxHealth }
+
         };
 
-       _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
+        _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
         _room.OnStateChange += OnChange;
 
         _room.OnMessage<string>("Shoot", ApplyShoot);
+        
+        //Test
+        FindObjectOfType<Test>().SetText(GetSessionID());
     }
 
     //ѕолучили выстрел с сервера, передали контроллеру енеми
@@ -40,7 +43,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
         if (_enemies.ContainsKey(shootInfo.key) == false) {
             Debug.LogError("≈неми нет, а он пыталс€ стрел€ть");
-            return; 
+            return;
         }
 
         _enemies[shootInfo.key].Shoot(shootInfo);
@@ -53,10 +56,10 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         if (isFirstState == false) return;
 
         //state.players.ForEach((string key, Player player) => { }); - можно не писать тип данных
-        state.players.ForEach(( key, player) => {
+        state.players.ForEach((key, player) => {
 
-         if (key == _room.SessionId) CreatePlayer(player);
-            else CreateEnemy(key,player);
+            if (key == _room.SessionId) CreatePlayer(player);
+            else CreateEnemy(key, player);
         });
 
         _room.State.players.OnAdd += CreateEnemy;
@@ -67,7 +70,11 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
         var position = new Vector3(player.pX, player.pY, player.pZ);
 
-        Instantiate(_player,position,Quaternion.identity);
+        var playeCharacter = Instantiate(_player, position, Quaternion.identity);
+
+       // подписка Player на OnChange 
+       player.OnChange += playeCharacter.OnChange;
+        _room.OnMessage<string>("Restart", playeCharacter.GetComponent<Controller>().Restart);
     }
 
     private void CreateEnemy(string key, Player player) {
@@ -75,7 +82,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         var position = new Vector3(player.pX, player.pY, player.pZ);
 
         var enemy = Instantiate(_enemy, position, Quaternion.identity);
-        enemy.Init(player);
+        enemy.Init(key ,player);
 
         _enemies.Add(key, enemy);
     }

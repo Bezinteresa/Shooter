@@ -1,8 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
 public class EnemyCharacter : Character {
 
+    private string _sessionID;
+
+    [SerializeField] private Health _health;
     [SerializeField] private Transform _head;
 
     public Vector3 targetPosition { get; private set; } = Vector3.zero;
@@ -17,12 +21,28 @@ public class EnemyCharacter : Character {
     [SerializeField] CharacterAnimation _characterAnimation;
     private bool _isCrouch;
 
+
+    public void Init(string sessionID) {
+        _sessionID = sessionID;
+    }
+
     void Start () {
         targetPosition = transform.position;
         //targetRotationY = transform.eulerAngles;
     }
 
     public void SetSpeed(float value) => _speed = value;
+
+    public void SetMaxHp(int value) {
+        maxHealth = value;
+        _health.SetMax(value);
+        _health.SetCurrent(value);
+
+    }
+
+    public void RestoreHp(int newValue) {
+        _health.SetCurrent(newValue);
+    }
 
     private void Update() {
 
@@ -50,6 +70,19 @@ public class EnemyCharacter : Character {
         _velocityMagnitude = velocity.magnitude;
 
         this._velocity = velocity;
+    }
+
+    public void ApplyDamage(int damage) {
+        _health.ApplyDamage(damage);
+
+        Dictionary<string, object> data = new Dictionary<string, object>() {
+            {"id",_sessionID },
+            {"value", damage }
+
+        };
+        
+        MultiplayerManager.Instance.SendMessage("damage", data);
+        Debug.Log("sendDamage");
     }
 
     public void SetRotateX(float value) {
