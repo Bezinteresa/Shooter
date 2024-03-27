@@ -16,6 +16,7 @@ public class EnemyGun : Gun
     }
 
     public void ChangeGun(GunType gunType) {
+        Debug.Log(gunType);
         _currentGun = gunType;
 
         //Смена визуала оружия

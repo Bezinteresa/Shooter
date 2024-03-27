@@ -109,14 +109,10 @@ public class EnemyController : MonoBehaviour
                     _character.SetCrouch((bool)dataChange.Value);
                     break;
 
-                    //Поворот сглаживание
-                case "rVY":
-                    velocityY.y = (float)dataChange.Value;
-                    break;
-
                     //Смена ружия
                 case "gun":
                     //_gun.ChangeGun((GunType)dataChange.Value);
+                    Debug.Log((GunType)Enum.Parse(typeof(GunType), (string)dataChange.Value));
                     _gun.ChangeGun( (GunType)Enum.Parse(typeof(GunType),(string) dataChange.Value));
                     break;
 
@@ -130,7 +126,7 @@ public class EnemyController : MonoBehaviour
         _character.SetMovement(position,velosity,AverageInterval);
 
         //Поворот
-        _character.SetRotateY( rotationY,velocityY,AverageInterval );
+        _character.SetRotateY( rotationY );
 
     }
 

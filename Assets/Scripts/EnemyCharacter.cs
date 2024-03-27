@@ -90,7 +90,7 @@ public class EnemyCharacter : Character {
     }
 
     //Поворот
-    public void SetRotateY(in Vector3 position, in Vector3 velocity, in float averageInterval) {
+    public void SetRotateY(in Vector3 position) {
         //Новый поворот
         //targetRotationY = position + (velocity * averageInterval);
         //_velocityYMagnitude = velocity.magnitude;

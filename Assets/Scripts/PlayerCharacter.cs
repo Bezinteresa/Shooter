@@ -1,9 +1,6 @@
 using Colyseus.Schema;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class PlayerCharacter : Character
 {
@@ -81,7 +78,7 @@ public class PlayerCharacter : Character
     }
 
     public void GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX,
-        out float rotateY, out bool crouch, out float rotateVY, out string gun) {
+        out float rotateY, out bool crouch, out string gun) {
 
         position = transform.position;
         velocity = _rigidbody.velocity;
@@ -90,9 +87,6 @@ public class PlayerCharacter : Character
 
         //Присяд
         crouch = _isCrouch;
-
-        //Поворот сглаживание
-        rotateVY = _rigidbody.angularVelocity.y;
 
         gun = _gunType;
     }
